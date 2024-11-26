@@ -1,0 +1,6 @@
+name: proset
+
+dependencies:
+  - python=3.12
+  - flask
+  - flask-cors

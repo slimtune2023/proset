@@ -7,6 +7,17 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <div class="score-board">
+        <h1>ProSet Game</h1>
+        <div class="controls">
+            <button id="new-game" style="display: inline-table;">Start New Game</button>
+            <button id="reveal-answer" style="display: none;">Reveal Answer</button>
+        </div>
+        <div class="info">
+            <div id="score-header" style="display: none;">Score: <span id="score">0</span></div>
+            <div id="timer" style="display: none;">Time: <span id="time">0</span>s</div>
+        </div>
+    </div>    
     <div class="board">
         <div class="row">
             <div class="tile" data-tile-id="1"></div>
