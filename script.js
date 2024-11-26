@@ -11,14 +11,14 @@ document.addEventListener("DOMContentLoaded", () => {
     let timerInterval;
     let elapsedTime = 0;
 
-    // Function to reset the timer
+    // function to reset the timer
     const resetTimer = () => {
         clearInterval(timerInterval);
         elapsedTime = 0;
         timeField.textContent = elapsedTime;
     };
 
-    // Function to start the timer
+    // function to start the timer
     const startTimer = () => {
         resetTimer();
         timerInterval = setInterval(() => {
@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 1000);
     };
 
-    // Function to send the elapsed time to the backend
+    // function to send the elapsed time to the backend
     const sendElapsedTime = async () => {
         try {
             await fetch("http://127.0.0.1:5000/submit-time", {
@@ -42,7 +42,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    // Send click data to the backend
+    document.addEventListener("keydown", (event) => {
+        console.log(`Key pressed: ${event.key}, Code: ${event.code}`);
+    });
+
+    // send click data to the backend
     const startNewGame = async () => {
         try {
             const response = await fetch("http://127.0.0.1:5000/new-game-click", {
@@ -62,102 +66,50 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    // Event listener for "Start New Game"
+    // event listener for "Start New Game"
     newGameButton.addEventListener("click", () => {
         clearTiles();
-        // createTiles();
         startTimer();
-        logList.innerHTML = ""; // Clear log
-        revealAnswerButton.style.display = "inline-block"; // Show "Reveal Answer" button
-        scoreDisplay.style.display = "inline-block"; // Show "Score" field
-        timerDisplay.style.display = "inline-block"; // Show "Timer" field
+
+        logList.innerHTML = ""; // clear log
+        revealAnswerButton.style.display = "inline-block"; // show "Reveal Answer" button
+        scoreDisplay.style.display = "inline-block"; // show "Score" field
+        timerDisplay.style.display = "inline-block"; // show "Timer" field
 
         startNewGame();
     });
 
-    // Event listener for "Reveal Answer"
+    // event listener for "Reveal Answer"
     revealAnswerButton.addEventListener("click", () => {
         revealAnswer();
     });
 
-    // Function to reveal the answer (mocked for now)
+    // function to reveal the answer (mocked for now)
     const revealAnswer = () => {
         alert("Revealed answer (this functionality can be customized)");
         clearInterval(timerInterval);
-        sendElapsedTime(); // Send elapsed time
+        sendElapsedTime(); // send elapsed time
     };
 
-    // Function to clear all tiles
+    // function to clear all tiles
     const clearTiles = () => {
         board.innerHTML = "";
     };
 
-    // Function to generate tiles dynamically
-    const createTiles = () => {
-        const tileIds = [1, 2, 3, 4, 5, 6, 7]; // Update IDs if needed
-
-        const rows = [
-            [tileIds[0], tileIds[1]],
-            [tileIds[2], tileIds[3], tileIds[4]],
-            [tileIds[5], tileIds[6]],
-        ];
-
-        rows.forEach((rowTiles) => {
-            const rowDiv = document.createElement("div");
-            rowDiv.classList.add("row");
-
-            rowTiles.forEach((tileId) => {
-                const tile = document.createElement("div");
-                tile.classList.add("tile");
-                tile.setAttribute("data-tile-id", tileId);
-
-                // createDots(tile); // Add dots to the tile
-                rowDiv.appendChild(tile);
-
-                // Add click event listener to the tile
-                tile.addEventListener("click", () => handleTileClick(tileId));
-            });
-
-            board.appendChild(rowDiv);
-        });
-    };
-
-    // Function to generate dots in a 3x2 pattern
-    const createDots = (tile) => {
-        const colors = ["red", "blue", "green", "yellow", "purple", "orange"];
-        const gridPositions = 6; // 6 dots for a 3x2 pattern
-
-        for (let i = 0; i < gridPositions; i++) {
-            const dot = document.createElement("div");
-            dot.classList.add("dot");
-
-            // Randomize dot color
-            if (Math.random() > 0.5) {
-                dot.style.backgroundColor = colors[i % colors.length];
-            } else {
-                // Make it "missing"
-                dot.style.backgroundColor = "transparent";
-                dot.style.borderColor = "transparent";
-            }
-
-            tile.appendChild(dot);
-        }
-    };
-
-    // Function to handle a tile click
+    // function to handle a tile click
     const handleTileClick = (tileId) => {
         const timestamp = new Date().toLocaleTimeString();
 
-        // Log the click event
+        // log the click event
         const logItem = document.createElement("li");
         logItem.textContent = `Tile ${tileId} clicked at ${timestamp}`;
         logList.appendChild(logItem);
 
-        // Send data to backend
+        // send data to backend
         sendClickData(tileId);
     };
 
-    // Send click data to the backend
+    // send click data to the backend
     const sendClickData = async (tileId) => {
         try {
             const response = await fetch("http://127.0.0.1:5000/tile-click", {
@@ -171,15 +123,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // pass the new tile data to a function to update the score and the tiles
             updateScore(data.newScore);
-            updateTiles(data.newTileData);
+            updateTiles(data.newTileData, data.setFound);
         } catch (error) {
             console.error("Error sending click data:", error);
         }
     };
 
-    // Function to update the tiles based on the backend array
-    const updateTiles = (tileData) => {
-        clearTiles(); // Clear existing tiles
+    // function to update the tiles based on the backend array
+    const updateTiles = (tileData, setFound) => {
+        clearTiles(); // clear existing tiles
 
         tileData.forEach(([tileId, dotArray, tileSelected]) => {
             const tile = document.createElement("div");
@@ -187,9 +139,15 @@ document.addEventListener("DOMContentLoaded", () => {
             tile.setAttribute("data-tile-id", tileId);
 
             if (tileSelected) {
-                tile.style.backgroundColor = "gray";
+                tile.style.backgroundColor = "white";
+                tile.style.outlineWidth = "3px";
             } else {
                 tile.style.backgroundColor = "white";
+                tile.style.outlineWidth = "1px";
+
+                if (setFound) {
+                    tile.style.backgroundColor = "gray";
+                }
             }
 
             const colors = ["red", "blue", "green", "yellow", "purple", "orange"];
@@ -200,12 +158,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 const dot = document.createElement("div");
                 dot.classList.add("dot");
 
-                // Randomize dot color
+                // randomize dot color
                 console.log(dotArray[i+1])
                 if (dotArray[i]) {
                     dot.style.backgroundColor = colors[i % colors.length];
                 } else {
-                    // Make it "missing"
+                    // make it "missing"
                     dot.style.backgroundColor = "transparent";
                     dot.style.borderColor = "transparent";
                 }
@@ -213,16 +171,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 tile.appendChild(dot);
             }
 
-            // Add click event listener to the new tile
+            // add click event listener to the new tile
             tile.addEventListener("click", () => handleTileClick(tileId));
 
-            // Append tile to the board
-            const row = getOrCreateRow(tileId); // Group tiles into rows dynamically
+            // append tile to the board
+            const row = getOrCreateRow(tileId); // group tiles into rows dynamically
             row.appendChild(tile);
         });
     };
 
-    // Utility to get or create a row for tiles
+    // utility to get or create a row for tiles
     const getOrCreateRow = (tileId) => {
         const rows = Array.from(board.querySelectorAll(".row"));
         const tilesPerRow = [2, 3, 2]; // Adjust based on layout
@@ -237,14 +195,11 @@ document.addEventListener("DOMContentLoaded", () => {
         return rows[rows.length - 1];
     };
 
-    // Function to update the score field
+    // function to update the score field
     const updateScore = (newScore) => {
         scoreField.textContent = newScore;
     };
-
-
-
-    // Initial tile generation
+    
+    // initially clear board
     clearTiles();
-    // createTiles();
 });

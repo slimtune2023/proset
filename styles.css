@@ -1,11 +1,11 @@
 body {
-    font-family: Calibri, sans-serif;
+    font-family: "Open Sans", sans-serif;
     margin: 0;
     padding: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #1b724c;
+    background-color: #28bb7b;
     color: rgb(255, 255, 255);
 }
 
@@ -69,8 +69,10 @@ button:hover {
 .tile {
     width: 80px;
     height: 120px;
-    border: 2px solid #000;
+    outline: 1px solid #000000;
+    /* outline: 10px solid red; */
     border-radius: 8px;
+    box-sizing: border-box;
     background-color: #ecfbff;
     display: grid;
     grid-template-rows: repeat(3, 1fr);
@@ -78,10 +80,14 @@ button:hover {
     position: relative;
 }
 
+.tile:hover {
+    transform: scale(1.02);
+}
+
 .dot {
     width: 20px;
     height: 20px;
-    border: 2px solid #000;
+    border: 1px solid #000;
     border-radius: 50%;
     margin: auto;
 }

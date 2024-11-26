@@ -74,7 +74,7 @@ def update_tiles(tile_id):
         set_found = valid_set(tiles_in_play, tile_inds)
 
 def package_tile_data():
-    global score, tiles_selected, tiles_in_play
+    global score, set_found, tiles_selected, tiles_in_play
 
     print(tiles_selected)
     print(tiles_in_play)
@@ -92,7 +92,7 @@ def package_tile_data():
         
         print(tiles[tile_id])
     
-    return jsonify({"newScore": score, "newTileData": tiles})
+    return jsonify({"newScore": score, "newTileData": tiles, "setFound": set_found})
 
 @app.route("/new-game-click",  methods=["POST"])
 def new_game_click():
