@@ -42,6 +42,42 @@ def valid_set(tiles_in_play, tile_inds):
     
     return result == 0
 
+def find_valid_set():
+    global tiles_in_play
+    
+    tile_inds = [ (i, tiles_in_play[i]) for i in range(MAX_TILES_IN_PLAY) if tiles_in_play[i] > 0 ]
+    if len(tile_inds) == 0:
+        return []
+
+    def helper(tile_inds, start, end, xor, subset):
+        if start == end:
+            return subset.copy() if xor == 0 else []
+        else:
+            subset_wout = helper(tile_inds, start + 1, end, xor, subset)
+            if len(subset_wout) > 0:
+                return subset_wout
+
+            t = tile_inds[start]
+            subset.append(t[0])
+            subset_with = helper(tile_inds, start + 1, end, xor ^ t[1], subset)
+            subset.pop()
+
+            return subset_with
+    
+    return helper(tile_inds, 0, len(tile_inds), 0, [])
+
+def update_valid_set():
+    global set_found, tiles_selected
+
+    # find valid set
+    valid_set = find_valid_set()
+    
+    # update valid set as selected
+    for i in range(MAX_TILES_IN_PLAY):
+        tiles_selected[i] = (i in valid_set)
+    
+    set_found = (len(valid_set) > 0)
+
 def update_tiles(tile_id):
     global score, set_found, tiles_left, tiles_in_play, tiles_selected
 
@@ -104,6 +140,15 @@ def new_game_click():
 
     return score_tile_data
 
+@app.route("/reveal-click",  methods=["POST"])
+def reveal_click():
+    data = request.json
+    
+    # update valid set in global data
+    update_valid_set()
+
+    return package_tile_data()
+
 @app.route("/tile-click", methods=["POST"])
 def tile_click():
     data = request.json
@@ -111,9 +156,7 @@ def tile_click():
     print(f"tile {tile_id} was clicked")
 
     update_tiles(tile_id)
-    score_tile_data = package_tile_data()
-
-    return score_tile_data
+    return package_tile_data()
 
 if __name__ == "__main__":
     app.run(debug=True)

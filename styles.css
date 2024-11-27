@@ -7,6 +7,9 @@ body {
     align-items: center;
     background-color: #28bb7b;
     color: rgb(255, 255, 255);
+    transform: scale(1.5); /* Scale to 150% */
+    transform-origin: top center; /* Ensure the scaling starts from the top-left corner */
+    overflow-x: hidden;
 }
 
 .score-board {
@@ -27,7 +30,6 @@ body {
     justify-content: center;
     align-items: center; /* Align items vertically */
 }
-
 
 button {
     margin: 10px;
@@ -69,8 +71,8 @@ button:hover {
 .tile {
     width: 80px;
     height: 120px;
-    outline: 1px solid #000000;
-    /* outline: 10px solid red; */
+    outline: 2px solid #000000;
+    outline-offset: -1px;
     border-radius: 8px;
     box-sizing: border-box;
     background-color: #ecfbff;

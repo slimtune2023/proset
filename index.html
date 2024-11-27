@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ProSet Game</title>
+    <title>PROSET</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="score-board">
         <!-- <h1>PROSET</h1> -->
         <div class="controls">
-            <button id="new-game" style="display: inline-table;">Start New Game</button>
+            <button id="new-game" style="display: none;">Start New Game</button>
             <button id="reveal-answer" style="display: none;">Reveal Answer</button>
         </div>
         <div class="info">
             <div id="score-header" style="display: none;">Score: <span id="score">0</span></div>
-            <div id="timer" style="display: none;">Time: <span id="time">0</span>s</div>
+            <div id="timer" style="display: none;">Time: <span id="time">00:00:00</span></div>
         </div>
     </div>    
     <div class="board">
@@ -33,7 +33,7 @@
             <div class="tile" data-tile-id="7"></div>
         </div>
     </div>
-    <div class="log">
+    <div class="log" style="display: none">
         <h2>Click Log</h2>
         <ul id="log-list"></ul>
     </div>
